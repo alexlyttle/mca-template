@@ -70,7 +70,17 @@
 
 
 % To enable the bibliography
-\usepackage[refsection=part,citestyle=apa,style=authoryear,natbib=true,backend=biber]{biblatex}
+\usepackage[
+  refsection=part,
+  citestyle=authoryear,
+  style=authoryear,
+  natbib=true,
+  backend=biber,
+  url=false,
+  isbn=false,
+  block=none,
+  date=year,
+]{biblatex}
 \bibliography{bibliography}
 
 \usepackage{amsmath}

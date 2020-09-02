@@ -72,12 +72,13 @@
 % To enable the bibliography
 \usepackage[
   refsection=part,
-  citestyle=authoryear,
+  citestyle=apa,
   style=authoryear,
   natbib=true,
   backend=biber,
   url=false,
   isbn=false,
+  uniquename=false,
   block=none,
   date=year,
 ]{biblatex}
@@ -120,3 +121,5 @@
             linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
 
 \usepackage[final]{pdfpages}
+
+\usepackage[titletoc]{appendix}

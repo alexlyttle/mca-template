@@ -110,7 +110,7 @@
 
 %% BACKMATTER %%
 % The pages inside of backmatter are in Arabic numerals and the chapters will not have numeration
-\backmatter
+% \backmatter
 
 % BIBLIOGRAPHY WITH BIBTEX %
 \include{backmatter/bibliography}
@@ -121,7 +121,7 @@
 % bibtex main (without ".tex")
 
 % INDEX %
-\include{backmatter/index}
+% \include{backmatter/index}
 % To add an item in it, write the \index{WORD} after the word to highlight:
 % WORD\index{WORD}
 % In order to update the Index you have to execute:
@@ -141,7 +141,8 @@
 % pdflatex main
 
 %% APPENDICES %%
-\appendix
-\include{appendix/paper}
+\begin{appendices}
+    \include{appendix/paper}
+\end{appendices}
 
 \end{document}

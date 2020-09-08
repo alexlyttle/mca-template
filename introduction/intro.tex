@@ -1,5 +1,47 @@
 \chapter{Introduction}
 
+\section{Hierarchical Bayesian Models}
+
+Consider a model for a single object comprising a set of independent parameters, $\bm{\theta} = \{\theta_i\}_{i=1}^{N_\theta}$ which makes a set of predictions, $\bm{\mu}_y = \{\mu_{y,\,j}\}_{j=1}^{N_y}$ where $\bm{\mu}_y = \bm{\mu}_y (\bm{\theta})$. Using Bayes' theorem, we may write the \emph{posterior} probability density function (PDF) of the model given a set of observations $\bm{y}$ as,
+%
+\begin{equation}
+    p(\bm{\theta}|\bm{y}) = \frac{p(\bm{y}|\bm{\theta})\,p(\bm{\theta})}{p(\bm{y})},
+    \label{eq:bayes}
+\end{equation}
+%
+where $p(\bm{y}|\bm{\theta})$ is the \emph{likelihood} of the data given the model, $p(\bm{\theta})$ is the \emph{a priori} PDF of the model parameters, and $p(\bm{y})$ is the \emph{evidence} of the data. 
+
+Assuming our observations of $\bm{y}$ are uncorrelated and subjected to random, Gaussian noise with a known standard deviation, $\bm{\sigma}_y$, we may write the likelihood function as a normal distribution,
+%
+\begin{align}
+    p(\bm{y}|\bm{\theta}) = &\prod_{j=1}^{N_y} \frac{1}{\sigma_{y,\,j} \sqrt{2\pi}} \exp \left[ - \frac{(y_j - \mu_{y,\,j})^2}{2 \sigma_{y,\,j}^2} \right],\\
+    \equiv &\prod_{j=1}^{N_y} \mathcal{N}(y_j | \mu_{y,\,j}, \sigma_{y,\,j}).
+\end{align}
+%
+
+The prior PDF of the model, assuming the parameters are independent, is $p(\bm{\theta}) = \prod_i p(\theta_i)$. Encoding our prior understanding of the model this way is useful for improving our inference. For example, we have independent evidence that the age of the universe is $\sim \SI{14}{\giga\year}$ [CITE]. Hence, we may choose to give the age parameter for a stellar model a uniform prior PDF from \SIrange{0}{14}{\giga\year} such that our posterior PDF is not influenced by unphysical ages.
+
+The evidence is the PDF of the observational data. We write this as the normalisation of the numerator of Equation \ref{eq:bayes},
+%
+\begin{equation}
+    p(\bm{y}) = \int_{-\infty}^{+\infty} p(\bm{y}|\bm{\theta})\,p(\bm{\theta})\,\dd \bm{\theta}.
+\end{equation}
+%
+
+MARGINALISATION
+
+The model described above can be applied to a single object such as a star. However, let us now consider modelling a population of $N_\mathrm{obj}$ similar objects. We could combine the posteriors for each object to get a posterior for the population of objects,
+%
+\begin{equation}
+    p(\bm{\Theta}|\bm{Y}) = \prod_{k=1}^{N_\mathrm{obj}} p(\bm{\theta}_k|\bm{y}_k),
+\end{equation}
+%
+where $\bm{\Theta} = \{\bm{\theta}_k\}_{k=1}^{N_\mathrm{obj}}$ and $\bm{Y} = \{\bm{y}_k\}_{k=1}^{N_\mathrm{obj}}$ are the matrices of model parameters and observations. We refer to this as a \emph{no-pooled} model because no information is shared between the objects. However, what if we have a model which describes the distribution of a particular $\bm{\theta}_i$ in the population? For example, if all the objects are stars in an open cluster which formed at roughly the same time, such as Messier 67 [CITE], we might want to encode such information into the model. One method would be to independently model the stars in the cluster and then find their population mean and standard deviation in age. It has been shown that this method typically over-predicts the standard deviation because it propagates the object-level uncertainties [CITE]. Alternatively, we can incorporate the assumption that stars in a cluster formed at the same time using one of two ways. The first is to \emph{partially-pool} and the second is to \emph{max-pool} the stellar ages respectively. The former assumes the object-level parameters are drawn from some common distribution, and the latter is the special case where all object-level parameters share the same value in the population.
+
+\section{Modelling a Star}
+
+Initial conditions mapping to observables.
+
 \section{Astroseismology}
 
 For over a century, we have been able to map stars based on their photometric magnitude and spectroscopic colour using Hertzsprung-Russell (HR) diagrams. Coupling such observational data with measurements of interstellar distances using parallax, we were able to determine stellar luminosities. The unique structure of early HR diagrams eluded to the idea that stars evolve over time. With the addition of nuclear physics, theories of stellar evolution could be put to the test. However, while we could only observe stellar surface properties, many modelling mysteries would be left unsolved.
@@ -14,26 +56,16 @@ Solar-like oscillators are stars for which their acoustic oscillator modes (or p
 
 Review some work on solar-like oscillators and fundamental parameters.
 
-\subsection{Detecting oscillation modes}
+\section{Sampling Stellar Models}
+
+\subsection{Grid-Based Modelling}
+
+\subsection{Neural Network}
+
+\section{Observing Stars}
+
+\subsection{Detecting Asteroseismic Oscillation Modes}
 
 Name some missions which were able to detect asteroseismic oscillations and review their limitations.
 
 Explain the types of stars which can be observed and methods we can obtain the oscillations
-
-\subsection{Helium II Ionization Zone Glitch}
-
-Explain what the glitch is an why it is useful.
-
-Review work which uses this to get stellar parameters.
-
-\section{Machine Learning in Astrophysics}
-
-Review works which use machine learning in astrophysics, particularly asteroseismology.
-
-\section{Hierarchical Bayesian Models in Astrophysics}
-
-Review work with uses HBMs in astrophysics.
-
-\section{Open-Source Code in Astrophysics}
-
-Review the state-of-the-art of open-source code in astrophysics.

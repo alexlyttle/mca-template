@@ -28,9 +28,15 @@ The evidence is the PDF of the observational data. We write this as the normalis
 \end{equation}
 %
 
-MARGINALISATION
+There are many ways to determine the posterior PDF, either analytically or numerically using e.g. Markov chain Monte Carlo (MCMC) through algorithms such as Metropolis-Hastings and Hamiltonian Monte-Carlo (HMC) [CITE]. Once we have the posterior, we can determine the marginalised posterior distribution of an individual parameter by integrating over all other parameters. For example, the marginalised posterior for $\theta_1$ is,
+%
+\begin{equation}
+    p(\theta_1 | \bm{y}) = \int_{-\infty}^{+\infty} p(\bm{\theta} | \bm{y}) \, \dd \theta_2 \dots \dd \theta_{N_{\theta}}.
+\end{equation}
+%
+Therefore, we end up with a distribution which describes the probability of $\theta_1$ given $\bm{y}$ which takes into account the distribution (or uncertainty) of all other parameters in the model.
 
-The model described above can be applied to a single object such as a star. However, let us now consider modelling a population of $N_\mathrm{obj}$ similar objects. We could combine the posteriors for each object to get a posterior for the population of objects,
+The model described above can be applied to a single object such as a star. Let us now consider modelling a population of $N_\mathrm{obj}$ similar objects. We could combine the posteriors for each object to get a posterior for the population of objects,
 %
 \begin{equation}
     p(\bm{\Theta}|\bm{Y}) = \prod_{k=1}^{N_\mathrm{obj}} p(\bm{\theta}_k|\bm{y}_k),
@@ -38,9 +44,72 @@ The model described above can be applied to a single object such as a star. Howe
 %
 where $\bm{\Theta} = \{\bm{\theta}_k\}_{k=1}^{N_\mathrm{obj}}$ and $\bm{Y} = \{\bm{y}_k\}_{k=1}^{N_\mathrm{obj}}$ are the matrices of model parameters and observations. We refer to this as a \emph{no-pooled} model because no information is shared between the objects. However, what if we have a model which describes the distribution of a particular $\bm{\theta}_i$ in the population? For example, if all the objects are stars in an open cluster which formed at roughly the same time, such as Messier 67 [CITE], we might want to encode such information into the model. One method would be to independently model the stars in the cluster and then find their population mean and standard deviation in age. It has been shown that this method typically over-predicts the standard deviation because it propagates the object-level uncertainties [CITE]. Alternatively, we can incorporate the assumption that stars in a cluster formed at the same time using one of two ways. The first is to \emph{partially-pool} and the second is to \emph{max-pool} the stellar ages respectively. The former assumes the object-level parameters are drawn from some common distribution, and the latter is the special case where all object-level parameters share the same value in the population.
 
+We refer to models which pool parameters in this way as hierarachical models [CITE]. We describe the distribution of $\bm{\Theta}$ in the population by a set of \emph{hyper-parameters}, $\bm{\phi} = \{ \phi_l \}_{l=1}^{N_\phi}$. Bayes' equation now becomes,
+%
+\begin{equation}
+    p(\bm{\phi}, \bm{\Theta} | \bm{Y}) = \frac{p(\bm{Y} | \bm{\Theta}) \, p(\bm{\Theta} | \bm{\phi}) \, p(\bm{\phi})}{p(\bm{Y})}
+\end{equation}
+%
+where the probability of $\bm{\Theta}$ given $\bm{\phi}$ is,
+%
+\begin{equation}
+    p(\bm{\Theta} | \bm{\phi}) = \prod_{k=1}^{N_\mathrm{obj}} d(\bm{\theta}_k | \bm{\phi}),
+\end{equation}
+%
+and $d(\bm{\theta}_k | \bm{\phi})$ is some chosen distribution from which the parameters for a given object are drawn from the population.
+
+Let us consider a simple model which predicts the luminosities, $\bm{L}$ from the ages, $\bm{\tau}$ of $N_\mathrm{obj} = 1000$ stars in a cluster formed at roughly the same time. Modelling the population independently, we get the posterior,
+%
+\begin{equation}
+    p(\bm{\tau} | \bm{L}) \propto \prod_{k=1}^{1000} p(L_k | \tau_k) \, p(\tau_k).
+    \label{eq:age-np}
+\end{equation}
+%
+Now, let us consider a partially-pooled model where the stellar ages are drawn from a normal distribution centred on a mean, $\mu_\tau$ and standard deviation, $\sigma_\tau$. The posterior now becomes,
+%
+\begin{equation}
+    p(\mu_\tau, \sigma_\tau, \bm{\tau} | \bm{L}) \propto p(\bm{L} | \bm{\tau}) \, p(\bm{\tau} | \mu_\tau, \sigma_\tau) \, p(\mu_\tau, \sigma_\tau),
+    \label{eq:age-pp}
+\end{equation}
+%
+where,
+%
+\begin{equation}
+    p(\bm{\tau} | \mu_\tau, \sigma_\tau) = \prod_{k=1}^{1000} \mathcal{N}(\tau_k | \mu_\tau, \sigma_\tau).
+\end{equation}
+
+There is no known analytical or empirical relation between the age of a star and its luminosity, but for the purposes of this example let us say that we know $L \propto \tau^{2}$. I generated 1000 stellar ages from a normal distribution with a mean of \SI{5}{\giga\year} and a standard deviation of \SI{0.05}{\giga\year}, and computed their luminosities using this relation. Then, I added Gaussian noise to the luminosities with a standard deviation of \SI{0.05}{\solarluminosity} and proceeded to model the stellar ages using Equations \ref{eq:age-np} and \ref{eq:age-pp} and the Bayesian package \texttt{pymc3} [CITE]. The observed and true luminosities are plot against the true ages in Figure \ref{fig:obs_lum} to show
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[]{introduction/images/obs_lum.png}
+    \caption{Luminosity against true ages of a fake stellar cluster. The true luminosities lie on the red line and the observed luminosities (black) have been artificially scattered by \SI{0.05}{\solarluminosity}.}
+    \label{fig:obs_lum}
+\end{figure}
+
+If we wished to determine spread of stellar ages in the cluster using the no-pooled mode, we might na\"{i}vely calculate a standard deviation from the resulting stellar ages. However, this overestimates the true standard deviation, getting \SI{0.109}{\giga\year} rather than \SI{0.05}{\giga\year}, because it includes the uncertainty in the individual ages. When we model the population mean and spread in the hierarchical model we get $\mu_\tau = \SI{5.002(3)}{\giga\year}$ and $\sigma_\tau = \SI{0.042(7)}{\giga\year}$ which are within $< 2\sigma$ of the truths. Therefore, the hierarachical model is a better way of determining population-level statistics than the traditional no-pooled model.
+
+Both models can accurately determine ages, but the hierarchical model returns more precise ages, assuming our prior assumptions are true. Figure \ref{fig:zscore} shows that the $z$-score for ages from both models match a normal distribution with a mean of 0 and standard deviation of 1, indicating the individual stellar ages and uncertainties are accurate. However, the partially pooled model produces more than doubly precise ages, as shown in Figure \ref{fig:age_unc}, because the model takes into account the population mean and spread as hyper-parameters. The reduced scatter on stellar ages is also reflected in the top-left plot of Figure \ref{fig:zscore}.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[]{introduction/images/age_z_score.png}
+    \caption{The $z$-score, $(\bar{\tau} - \tau_\mathrm{true}) / s_\tau$, where $\bar{\tau}$ and $s_\tau$ are the respective sample mean and standard deviation of the posterior ages from each of the no- and partially-pooled models.}
+    \label{fig:zscore}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[]{introduction/images/age_uncertainties.png}
+    \caption{Standard deviations, $s_\tau$ of the age posteriors from both the no- and partially-pooled models.}
+    \label{fig:age_unc}
+\end{figure}
+
+If we wish to improve the precision of fundamental stellar parameters, using hierarchical models to encode our prior knowledge is essential. However, modelling stars is not as simple, nor analytical as in the example above. Before we can statistically model a population of stars, we must have a way of generating stellar observables from fundamental parameters such as age and mass. In the next section, I give an overview of how we numerically model stellar observables and why traditional methods pose new problems when adapting the above model.
+
 \section{Modelling a Star}
 
-Initial conditions mapping to observables.
+Initial conditions mapping to observables. What is MESA. 
 
 \section{Astroseismology}
 

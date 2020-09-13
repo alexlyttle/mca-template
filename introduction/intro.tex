@@ -87,7 +87,7 @@ There is no known analytical or empirical relation between the age of a star and
     \label{fig:obs_lum}
 \end{figure}
 
-If we wished to determine spread of stellar ages in the cluster using the no-pooled mode, we might na\"{i}vely calculate a standard deviation from the resulting stellar ages. However, this overestimates the true standard deviation, getting \SI{0.109}{\giga\year} rather than \SI{0.05}{\giga\year}, because it includes the uncertainty in the individual ages. When we model the population mean and spread in the hierarchical model we get $\mu_\tau = \SI{5.002(3)}{\giga\year}$ and $\sigma_\tau = \SI{0.042(7)}{\giga\year}$ which are within $< 2\sigma$ of the truths. Therefore, the hierarachical model is a better way of determining population-level statistics than the traditional no-pooled model.
+If we wished to determine spread of stellar ages in the cluster using the no-pooled model, we might na\"{i}vely calculate a standard deviation from the resulting stellar ages. However, this overestimates the true standard deviation, getting \SI{0.109}{\giga\year} rather than \SI{0.05}{\giga\year}, because it includes the uncertainty in the individual ages. When we model the population mean and spread in the hierarchical model we get $\mu_\tau = \SI{5.002(3)}{\giga\year}$ and $\sigma_\tau = \SI{0.042(7)}{\giga\year}$ which are within $< 2\sigma$ of the truths. Therefore, the hierarachical model is a better way of determining population-level statistics than the traditional no-pooled model.
 
 Both models can accurately determine ages, but the hierarchical model returns more precise ages, assuming our prior assumptions are true. Figure \ref{fig:zscore} shows that the $z$-score for ages from both models match a normal distribution with a mean of 0 and standard deviation of 1, indicating the individual stellar ages and uncertainties are accurate. However, the partially pooled model produces more than doubly precise ages, as shown in Figure \ref{fig:age_unc}, because the model takes into account the population mean and spread as hyper-parameters. The reduced scatter on stellar ages is also reflected in the top-left plot of Figure \ref{fig:zscore}.
 
@@ -109,7 +109,27 @@ If we wish to improve the precision of fundamental stellar parameters, using hie
 
 \section{Modelling a Star}
 
-Initial conditions mapping to observables. What is MESA. 
+How do we model stellar observables? A bit of history of the topic including \citet{Eddington1926}. Then Chandrasekhar 1939 and Schwartzschild 1958.
+
+Introduction of stellar computational codes in the 1960s e.g. Iben and Ehrman 1962 and Kippenhahn et al. 1967 to solve the complicated differential equations
+
+Today, many codes exist from one-dimensional [CITE] to three-dimensional and their outputs are often compared [CITE aarhus red giants challenge and Magic papers].
+
+Why did we chose MESA? 
+
+What are the basic need-to-knows of stellar evolution in order to understand this work?
+
+Basic scalings of observables with fundamentals, e.g. what is luminosity, effective temperature. 
+
+What are the evolutionary phases, a stellar track may be useful here?
+
+What is X Y and Z and w
+
+What is the mixing-length theory of convection? A diagram of the sun may be helpful.
+
+What is element diffusion and why is it better to include it?
+
+Finally, what is asteroseismology and why is it useful in stellar evolution?
 
 \section{Astroseismology}
 
@@ -123,18 +143,44 @@ Give examples of the sorts of things asteroseismology can help us uncover, from 
 
 Solar-like oscillators are stars for which their acoustic oscillator modes (or p modes) are excited stochastically by convection in their outer layers.
 
+A diagrammay be useful to explain the theory and we want an equation to give delta nu which can be refered to later.
+
 Review some work on solar-like oscillators and fundamental parameters.
 
 \section{Sampling Stellar Models}
 
+Typically, we start by producing a large grid of stellar models. Some are available online.
+
 \subsection{Grid-Based Modelling}
 
-\subsection{Neural Network}
+What is GBM and give some examples e.g. BASTA \citet{SilvaAguirre.Davies.ea2015}.
+
+What is wrong with GBM?
+
+\subsection{Interpolation}
+
+Why Interpolation is useful?
+
+How we might interpolate, e.g. linear ND interpolator example.
+
+\subsection{Machine Learning}
+
+A new alternative to GBM and interpolation is machine learning. Give examples of papers which have done this with stellar models.
+
+Although ML stellar models is not new, it has not yet been applied to an HBM. 
 
 \section{Observing Stars}
 
+How do we observe stars? E.g. how do we determine luminosity from parallax and magnitude.
+
+How do we determine effective temperature from spectroscopy?
+
+How do we determine metallicity?
+
 \subsection{Detecting Asteroseismic Oscillation Modes}
+
+Why do we care?
 
 Name some missions which were able to detect asteroseismic oscillations and review their limitations.
 
-Explain the types of stars which can be observed and methods we can obtain the oscillations
+Give an example from PBjam of detecting modes of oscillation.

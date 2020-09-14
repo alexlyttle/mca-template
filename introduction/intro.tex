@@ -1,6 +1,10 @@
 \chapter{Introduction}
 
+I will show how we did hierarchical modelling of stars.
+
 \section{Hierarchical Bayesian Models}
+
+NEEDS INTRODUCING AND REMEMBER THE AUDIENCE. TURN PACKED SENTANCES INTO PARAGRAPHS TO GUIDE THE READER THROUGH.
 
 Consider a model for a single object comprising a set of independent parameters, $\bm{\theta} = \{\theta_i\}_{i=1}^{N_\theta}$ which makes a set of predictions, $\bm{\mu}_y = \{\mu_{y,\,j}\}_{j=1}^{N_y}$ where $\bm{\mu}_y = \bm{f} (\bm{\theta})$. Using Bayes' theorem, we may write the \emph{posterior} probability density function (PDF) of the model given a set of observations $\bm{y}$ as,
 %
@@ -131,7 +135,7 @@ What is element diffusion and why is it better to include it?
 
 Finally, what is asteroseismology and why is it useful in stellar evolution?
 
-\section{Astroseismology}
+\section{Asteroseismology of Solar-Like Oscillators}
 
 For over a century, we have been able to map stars based on their photometric magnitude and spectroscopic colour using Hertzsprung-Russell (HR) diagrams. Coupling such observational data with measurements of interstellar distances using parallax, we were able to determine stellar luminosities. The unique structure of early HR diagrams eluded to the idea that stars evolve over time. With the addition of nuclear physics, theories of stellar evolution could be put to the test. However, while we could only observe stellar surface properties, many modelling mysteries would be left unsolved.
 
@@ -139,11 +143,14 @@ Until the last few decades, our understanding of stellar structure has been all 
 
 Give examples of the sorts of things asteroseismology can help us uncover, from ages \citep[see, e.g.]{Ulrich1986, Soderblom2010, SilvaAguirre.Davies.ea2015} to masses and radii from scaling relations \citep{} and fitting stellar models\citep{}.
 
-\subsection{Solar-like oscillators}
-
 Solar-like oscillators are stars which typical exhibit two kinds of standing waves: acoustic oscillation modes (or p modes) excited stochastically by convection in their outer layers and restored by pressure gradients, and internal gravity waves (or g modes) which are controlled by buoyancy. This work focuses on main sequence stars for which p modes are only present in their spectra. Hence, in this section I will summarise the theory behind acoustic waves present in main sequence stars.
 
 The theory which predicts the locations of the asteroseismic oscillation modes has its roots in the spherical harmonic oscillator. The eigenfrequencies, $\nu_{nlm}$ are categorised into modes of radial order, $n$, angular degree, $l$ and in the case of rotating bodies, azimuthal order, $m$. To simplify this discussion, I will assume the case where the star is non-rotating.
+
+% \begin{figure}[h]
+%     \includemovie{1cm}{1cm}{introduction/movies/0_0.gif}
+%     \caption{Animations.}
+% \end{figure}
 
 To first order in $\Delta\nu$, I may express the eigenfrequency as follows [CITE],
 %
@@ -175,19 +182,19 @@ Review some work on solar-like oscillators and fundamental parameters.
 
 Typically, we start by producing a large grid of stellar models. Some are available online.
 
-\subsection{Grid-Based Modelling}
+KEEP THIS SHORT DON'T SUBSECTION
+
+GBM each star on its own. We can't do hierarchical models this way.
+
+We intend to use a hierarachical model to model stars
 
 What is GBM and give some examples e.g. BASTA \citet{SilvaAguirre.Davies.ea2015}.
 
 What is wrong with GBM?
 
-\subsection{Interpolation}
-
 Why Interpolation is useful?
 
 How we might interpolate, e.g. linear ND interpolator example.
-
-\subsection{Machine Learning}
 
 A new alternative to GBM and interpolation is machine learning. Give examples of papers which have done this with stellar models.
 

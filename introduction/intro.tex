@@ -141,9 +141,33 @@ Give examples of the sorts of things asteroseismology can help us uncover, from 
 
 \subsection{Solar-like oscillators}
 
-Solar-like oscillators are stars for which their acoustic oscillator modes (or p modes) are excited stochastically by convection in their outer layers.
+Solar-like oscillators are stars which typical exhibit two kinds of standing waves: acoustic oscillation modes (or p modes) excited stochastically by convection in their outer layers and restored by pressure gradients, and internal gravity waves (or g modes) which are controlled by buoyancy. This work focuses on main sequence stars for which p modes are only present in their spectra. Hence, in this section I will summarise the theory behind acoustic waves present in main sequence stars.
 
-A diagrammay be useful to explain the theory and we want an equation to give delta nu which can be refered to later.
+The theory which predicts the locations of the asteroseismic oscillation modes has its roots in the spherical harmonic oscillator. The eigenfrequencies, $\nu_{nlm}$ are categorised into modes of radial order, $n$, angular degree, $l$ and in the case of rotating bodies, azimuthal order, $m$. To simplify this discussion, I will assume the case where the star is non-rotating.
+
+To first order in $\Delta\nu$, I may express the eigenfrequency as follows [CITE],
+%
+\begin{equation}
+    \nu_{nl} \simeq \Delta \nu\left(n+ \frac{l}{2} + \epsilon\right)
+\end{equation}
+%
+where,
+%
+\begin{equation}
+    \Delta \nu = \left(2 \int_{0}^{R} \frac{\mathrm{d} r}{c(r)}\right)^{-1}
+    \label{eq:dnu}
+\end{equation}
+%
+is proportional to the inverse of the sound travel time over the stellar diameter, $2R$ where the speed of sound $c$ is a function of stellar radii. The large frequency separation, $\Delta\nu$ is approximately the frequency difference between consecutive modes of the same $l$. From Equation \ref{eq:dnu}, it has been shown by substitution of the speed of sound in a gas, that the average large frequency separation, $\langle \Delta \nu \rangle$ scales with the average stellar density, $\langle\rho\rangle$ [CITE Ulrich 1989],
+%
+\begin{equation}
+    \left\langle\Delta \nu_{n l}\right\rangle \propto \langle\rho\rangle^{1 / 2}.
+\end{equation}
+%
+
+The diagram in Figure \ref{fig:seismo} shows the path of the asteroseismic wave fronts through a cross-section of a stellar interior. One can see how modes of different angular degree penetrate the star at different depths.
+
+How do we observe $\nu$?
 
 Review some work on solar-like oscillators and fundamental parameters.
 

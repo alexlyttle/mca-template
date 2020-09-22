@@ -1,10 +1,16 @@
 \chapter{Introduction}
 
-I will show how we did hierarchical modelling of stars.
+Improving inference of fundamental stellar properties such as age, mass and radius is important for improving our understand of the chronology of the Milky Way and measuring the properties of exoplanets. In the last few years, asteroseismology has been able to provide tighter constraints on stellar properties [CITE]. However, as we reduce our precision, the systematic uncertainties from our choice of model physics begin to dominate. We need a way to model additional physics without sacrificing precision and to account for the effects of extra stellar physics.
 
-\section{Hierarchical Bayesian Models}
+In this report, I will first introduce a new method for determining stellar parameters through the use of a hierarachical Bayesian model (HBM). Then, I will explain how we predict observables from stellar evolutionary codes. In Section \ref{sec:seismo} I introduce asteroseismology and show how the detection of stellar oscillations can probe the structure of a star. I then explain how we sample from our models of stellar evolution and asteroseismology, introducing the need for machine learning to speed-up the process and increase the scalability of the HBM. Once we have a way of making predictions of observables, I describe how we measure such properties in stars.
 
-NEEDS INTRODUCING AND REMEMBER THE AUDIENCE. TURN PACKED SENTANCES INTO PARAGRAPHS TO GUIDE THE READER THROUGH.
+In Chapter \ref{ch:paper} I will introduce my paper which applies the methods in this chapter to a sample of stars with asteroseismic detections already studied by \citet{Serenelli.Johnson.ea2017}. I will show that, with the assistance of machine learning, we can reduce statistical uncertainties on ages, masses and radii to $\sim 10\%$, $\sim 3\%$ and $\sim 1\%$ respectively, despite increasing the number of free parameters in the model over what is currently done in the literature.
+
+Finally, in Chapter \ref{ch:future} I will propose an extension to the method whisch introduces a new observable to improve the inference of helium abundance in stars.
+
+\section{Hierarchical Bayesian Models}\label{sec:hbm}
+
+In this section, I begin by describing a Bayesian probabilistic model of a star. Then, I show how we can extend the model to an HBM which introduces parameters to describe a population of stars. I demonstrate, with a simple example, that such a method can improve the inference of fundamental parameters.
 
 Consider a model for a single star comprising a set of independent parameters, $\bm{\theta} = \{\theta_i\}_{i=1}^{N_\theta}$ which makes a set of predictions, $\bm{\mu} = \bm{f} (\bm{\theta})$, where $\bm{\mu} = \{\mu_{j}\}_{j=1}^{N_y}$ and $N_y$ is the number of observables. Using Bayes' theorem, we may write the \emph{posterior} probability density function (PDF) of the model given a set of observations $\bm{y}$ as,
 %
@@ -108,7 +114,7 @@ Both models can accurately determine ages, but the hierarchical model returns mo
 
 If we wish to improve the precision of fundamental stellar parameters, using hierarchical models to encode our prior knowledge is essential. However, modelling stars is not as simple, nor analytical as in the example above. Before we can statistically model a population of stars, we must have a way of generating stellar observables from fundamental parameters such as age and mass. In the next section, I give an overview of how we numerically model stellar observables and why traditional methods pose new problems when adapting the above model.
 
-\section{Modelling a Star}
+\section{Modelling a Star}\label{sec:models}
 
 Modelling a star is a complicated process with no simple law which describes the evolution of measurable quantities as a function of its age and initial bulk properties. Following the development of quantum theories of ionization and radiation, the theory of the stellar interior was able to progress from the assumption that stars were a ball of uniform, ideal gas \citet{Eddington1926}. Stellar structure could be simplified to the combined effects of a few differential equations.
 
@@ -147,13 +153,11 @@ In this work, we use an open-source 1D stellar evolutionary code called the Modu
 
 Example inputs to MESA include: the mass, $M$, the mixing-length theory parameter, $\alpha_\mathrm{mlt}$, and the fractional composition of hydrogen, helium and other heavy elements characterised by the $X$, $Y$ and $Z$ respectively where $X+Y+Z=1$. If the macroscopic diffusion of heavy elements is considered, the chemical composition at the surface of the star will change with time.
 
-\section{Asteroseismology of Solar-Like Oscillators}
+\section{Asteroseismology of Solar-Like Oscillators}\label{sec:seismo}
 
 For over a century, we have been able to map stars based on their photometric magnitude and spectroscopic colour with HRDs. Coupling such observational data with measurements of interstellar distances using parallax, we were able to determine stellar luminosities. The unique structure of early HR diagrams eluded to the idea that stars evolve over time. With the addition of nuclear physics, theories of stellar evolution could be put to the test. However, while we could only observe stellar surface properties, many modelling mysteries would be left unsolved.
 
-Until the last few decades, our understanding of stellar structure has been all but skin deep. In the 1960s, observations of 5-minute brightness fluctuations in the solar photosphere lead to the study of stochastically driven acoustic waves trapped beneath the surface of the Sun \citep{Ulrich1970, Ando.Osaki1975}. Later named helioseismology \citep{Deubner.Gough1984}, the study of oscillation modes allowed for further insights into the solar interior, such as rotation \citep{Deubner.Ulrich.ea1979} and solar neutrino production \citep{Bahcall.Ulrich1988}. In tandem with this research was the emergence of asteroseismology -- the study of stars through their oscillation frequencies \citep{Christensen-Dalsgaard1984}.
-
-Give examples of the sorts of things asteroseismology can help us uncover, from ages \citep[see, e.g.]{Ulrich1986, Soderblom2010, SilvaAguirre.Davies.ea2015} to masses and radii from scaling relations \citep{} and fitting stellar models\citep{}.
+Until the last few decades, our understanding of stellar structure has been all but skin deep. In the 1960s, observations of 5-minute brightness fluctuations in the solar photosphere lead to the study of stochastically driven acoustic waves trapped beneath the surface of the Sun \citep{Ulrich1970, Ando.Osaki1975}. Later named helioseismology \citep{Deubner.Gough1984}, the study of oscillation modes allowed for further insights into the solar interior, such as rotation \citep{Deubner.Ulrich.ea1979} and solar neutrino production \citep{Bahcall.Ulrich1988}. In tandem with this research was the emergence of asteroseismology -- the study of stars through their oscillation frequencies \citep{Christensen-Dalsgaard1984}. Asteroseismolgy has since been used to improve inference on the fundamental properties of stars \citep[see, e.g.][]{Ulrich1986, Soderblom2010, SilvaAguirre.Davies.ea2015}.
 
 Solar-like oscillators are stars which typical exhibit two kinds of standing waves: acoustic oscillation modes (or p modes) excited stochastically by convection in their outer layers and restored by pressure gradients, and internal gravity waves (or g modes) which are controlled by buoyancy. This work focuses on main sequence stars for which p modes are only present in their spectra. Hence, in this section I will summarise the theory behind acoustic waves present in main sequence stars.
 
@@ -205,19 +209,19 @@ The theory which predicts the locations of the asteroseismic oscillation modes h
     \label{fig:modes}
 \end{figure}
 
-Figure \ref{fig:waves} shows the paths of wave fronts travelling through the stellar interior at difference angular degree $l$. The waves curve due to the changing sound speed profile inside the star. We can see how waves with difference $l$ probe different depths of the stellar interior. In the case of the Sun, where modes of high $l$ are able to be resolved, this has allowed us to uncover its density profile and through $m$, its internal rotation rates \citep{}.
+Figure \ref{fig:waves} shows the paths of wave fronts travelling through the stellar interior at difference angular degree $l$. The waves curve due to the changing sound speed profile inside the star. We can see how waves with difference $l$ probe different depths of the stellar interior. In the case of the Sun, where modes of high $l$ are able to be resolved, this has allowed us to uncover its density profile \citep{}.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.7\linewidth]{introduction/images/seismo_wavefronts.png}
+    \includegraphics[width=.5\linewidth]{introduction/images/seismo_wavefronts.png}
     \caption{The asteroseismic wave fronts in a typical stellar interior. The blue, orange, green, red and purple lines represent the paths of oscillations with angular degree, $l=1,2,3,25,75$ respectively. The dashed lines represent the depth probed by each mode.}
     \label{fig:waves}
 \end{figure}
 
-To first order in $\Delta\nu$, I may express the eigenfrequency as follows \citep{Mosser.Belkacem.ea2011},
+We characterise the first three angular degrees as radial, $l=0$, dipolar, $l=1$ and quadrupoloar, $l=2$ modes. Observable p modes in solar-like oscillators are typically at high $n$ and low $l$, where asymptotic theory may be applied, $l/n \rightarrow 0$ \citep{Tassoul1980}. Therefore, to first order in $\Delta\nu$, we can approximate the frequency for a given as follows \citep{Christensen-Dalsgaard1984},
 %
 \begin{equation}
-    \nu_{nl} \simeq \Delta \nu\left(n+ \frac{l}{2} + \epsilon\right)
+    \nu_{nl} \simeq \Delta \nu\left(n+ \frac{l}{2} + \epsilon\right)\label{eq:seis}
 \end{equation}
 %
 where,
@@ -227,42 +231,32 @@ where,
     \label{eq:dnu}
 \end{equation}
 %
-is proportional to the inverse of the sound travel time over the stellar diameter, $2R$ where the speed of sound $c$ is a function of stellar radii. The large frequency separation, $\Delta\nu$ is approximately the frequency difference between consecutive modes of the same $l$. From Equation \ref{eq:dnu}, one can show by substitution of the speed of sound in a gas, that the average large frequency separation, $\langle \Delta \nu \rangle$ scales with the average stellar density, $\langle\rho\rangle$ [CITE Ulrich 1989],
-%
-\begin{equation}
-    \left\langle\Delta \nu_{n l}\right\rangle \propto \langle\rho\rangle^{1 / 2}.
-\end{equation}
-%
+is proportional to the inverse of the sound travel time over the stellar diameter, $2R$ where the speed of sound $c$ is a function of stellar radii. The large frequency separation, $\Delta\nu$ is approximately the frequency difference between consecutive modes of the same $l$. Equation \ref{eq:seis} also implies that consecutive modes of odd and even degree should be separated by $\sim \Delta \nu / 2$. Second-order deviations from Equation \ref{eq:seis} can be shown to describe the small frequency spacing, $\delta \nu_{l\,l+2}$. In other words, we expect to find even and odd modes in $l$ to be found clustered together. In practice, as shown in Section \ref{sec:astero-obs}, we find pairs of radial and quadrupolar modes separated by $\sim \Delta\nu$ and dipolar modes in between them.
 
-How do we observe $\nu$?
+% From Equation \ref{eq:dnu}, one can show by substitution of the speed of sound in a gas, that the average large frequency separation, $\langle \Delta \nu \rangle$ scales with the average stellar density, $\langle\rho\rangle$ \citep{Ulrich1986},
+% %
+% \begin{equation}
+%     \left\langle\Delta \nu_{n l}\right\rangle \propto \langle\rho\rangle^{1 / 2}.
+% \end{equation}
+% %
 
-Review some work on solar-like oscillators and fundamental parameters.
+We detect exceited oscillation modes in an excess of power centred on the frequency at maximum power, $\nu_\mathrm{max}$. By characterising the behaviour of the waves close to the stellar surface, it can be shown that $\nu_\mathrm{max} \propto g T_\mathrm{eff}$ where $g$ is the surface gravity of the star \citep{Kjeldsen.Bedding1995}.
+
+We can determine theoretical oscillation modes by solving for the stellar profiles produced in the evolutionary models discussed in Section \ref{sec:models}. One such code build to predict oscillation modes for a given stellar structure is GYRE \citep{Townsend.Teitler2013}. 
 
 \section{Sampling Stellar Models}
 
-Typically, we start by producing a large grid of stellar models. Some are available online.
+Stellar evolution and astrometric models can predict observables given the age and initial conditions (e.g. mass, chemical composition and other model physics) for a given star. To implement the HBM described in Section \ref{sec:hbm} we need a way to generate predictions from the stellar models. There are generally two methods for achieving this: produced a discrete grid of models and evaluate the likelihood at each point or interpolate a grid of models and continuously sample an approximation of the grid. It is difficult to implement an HBM using either of these methods, because we need it to scale well with input dimensions and number of stars in a population.
 
-KEEP THIS SHORT DON'T SUBSECTION
+Grid-based modelling involves producing a large grid of stellar models with a range of input parameters. Then, the likelihood that a star is described by a point on the grid may be evaluated \citep[see e.g. BASTA][]{SilvaAguirre.Davies.ea2015}. However, using a discrete grid can lead to inaccurate model posteriors limited by the grid spacing and computing finer grids is more computationally expensive.
 
-GBM each star on its own. We can't do hierarchical models this way.
+Alternatively, we can interpolate the grid of models. This is common in the isochrone fitting method \citep{}. Here, a grid of models in 3 dimensions (mass, metallicity and age) may be easily interpolated to produce an approximation of the stellar models, continuously mapping inputs to observables. However, interpolation does not scale well with input dimensionality and size of the grid. In order to take full advantage of the HBM, we need the flexibility to expand the input dimensions to encompass extra model physics such as the mixing-length theory parameter, $\alpha_\mathrm{mlt}$. We need a faster way of approximating the grid of stellar models, which scales well with dimensions.
 
-We intend to use a hierarachical model to model stars
-
-What is GBM and give some examples e.g. BASTA \citet{SilvaAguirre.Davies.ea2015}.
-
-What is wrong with GBM?
-
-Why Interpolation is useful?
-
-How we might interpolate, e.g. linear ND interpolator example.
-
-A new alternative to GBM and interpolation is machine learning. Give examples of papers which have done this with stellar models.
-
-Although ML stellar models is not new, it has not yet been applied to an HBM. 
+One alternative to interpolation is to use machine learning. We can train an artificial neural network on the grid of models. This is the method used in Chapter \ref{ch:paper} and is explained in more detail in the attached paper (Appendix \ref{apx:paper}). In summary, the neural network is made up of many layers of trainable weights which are optimised to minimise the error between predictions and the training data. Advantageously, it is easy to evaluate the gradient of the likelihood of neural network predictions, because said gradient is required to optimise the weights. Therefore, approximating the models this way allows us to sample the posterior of the HBM using modern algorithms such as Hamiltonian Monte Carlo (HMC) \citep[see e.g. the No-U-Turn Sampler][]{Homan.Gelman2014}.
 
 \section{Observing Stars}
 
-In this section, we recall the fundamentals of observational astronomy. We first describe a method for determining luminosity from photmetric and astrometric measurements. Then, we show how spectroscopy can determine the chemical composition and temperature at the surface of a star. Finally, we show how we determine the asteroseismic oscillation modes from photometric time series measurements of a solar-like oscillator.
+In this section, we briefly recall the fundamentals of observational astronomy. We first describe a method for determining luminosity from photometric and astrometric measurements. Then, we show how spectroscopy can determine the chemical composition and temperature at the surface of a star. Finally, we show how we determine the asteroseismic oscillation modes from photometric time series measurements of a solar-like oscillator.
 
 \subsection{Photometry \& Astrometry}
 
@@ -306,8 +300,33 @@ where $\lambda_\mathrm{max}$ is the wavelength at maximum power.
 
 We have shown the basic theory behind determining temperature and abundances from spectroscopy, but there are a whole lot more to the process which goes beyond the scope of this work. A continuously updated source of abundances and parameters is the APOGEE stellar parameters and chemical abundances pipeline \citep[ASPCAP;][]{GarciaPerez.AllendePrieto.ea2016} of the Sloan Digital Sky Survey \citep[SDSS;][]{Blanton.Bershady.ea2017}.
 
-\subsection{Detecting Asteroseismic Oscillation Modes}
+\subsection{Detecting Asteroseismic Oscillation Modes}\label{sec:astero-obs}
 
-In order to characterise the asteroseismic oscillations of a star, we need measurements of its photometric time series. Several missions from \emph{Kepler} \citep{Borucki.Koch.ea2010} to more recently, TESS \citep{Ricker.Winn.ea2015} have provided time series data. We can extract the frequency-power spectrum from the time series using the Lomb-Scargle method \citep{Lomb1976, Scargle1982}. Figure \ref{fig:spectra} shows an example of an asteroseismic power spectrum. 
+We can measure the asteroseismic frequencies to higher precision than traditional stellar parameters such as $L$ and $T_\mathrm{eff}$, allowing for more precise comparison with stellar models.
 
-There are several methods which exist to extract the radial and quadrupolar ($l=0, 2$) oscillation modes from the asteroseismic power spectra \citep[see e.g.][]{Mosser.Belkacem.ea2011, Appourchaux.Chaplin.ea2012, Davies.Aguirre.ea2016}. In this work, we use the Python package \texttt{PBjam} (Nielsen et al. in preparation) to demonstrate one such method. 
+In order to characterise the asteroseismic oscillations of a star, we need measurements of its photometric time series. Several missions from \emph{Kepler} \citep{Borucki.Koch.ea2010} to more recently, TESS \citep{Ricker.Winn.ea2015} have provided time series data. We can extract the frequency-power spectrum from the time series using the Lomb-Scargle method \citep{Lomb1976, Scargle1982}. Figure \ref{fig:spec} shows an example of an asteroseismic power spectrum for TIC 38828538(Buldgen et al. in preparation). There is a power excess at around \SI{200}{\micro\hertz} which contains the excited oscillation modes. These are a series of peaks within the power element which correspond to frequencies, $\nu_{nl}$ of different radial order ($n$) and angular degree ($l$).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{introduction/images/sprectrum.png}
+    \caption{The frequency-power spectrum for a red giant star.}
+    \label{fig:spec}
+\end{figure}
+
+Figure \ref{fig:peakbag} shows the signal-to-noise (SNR; total power divided by an estimate of the background noise) spectrum for the star around the frequency of maximum power, $\nu_\mathrm{max} \approx \SI{200}{\micro\hertz}$. We can see that  
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{introduction/images/peakbag.png}
+    \caption{The signal-to-noise (SNR) power spectrum for a red giant star with 100 random samples from the posterior locations of the $l=0,2$ oscillation mode pairs.}
+    \label{fig:peakbag}
+\end{figure}
+
+There are several methods which exist to extract the radial and quadrupolar ($l=0, 2$) oscillation modes from the asteroseismic power spectra \citep[see e.g.][]{Mosser.Belkacem.ea2011, Appourchaux.Chaplin.ea2012, Davies.Aguirre.ea2016}. In this work, we use the Python package \texttt{PBjam} (Nielsen et al. in preparation) to demonstrate one such method.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{introduction/images/echelle.png}
+    \caption{An echelle diagram for a red giant star with the locations of the radial ($l=0$) and quadrupolar ($l=2$) oscillation modes.}
+    \label{fig:echelle}
+\end{figure}

@@ -1,12 +1,24 @@
 \chapter{Introduction}
 
-Improving inference of fundamental stellar properties such as age, mass and radius is important for improving our understand of the chronology of the Milky Way and measuring the properties of exoplanets. In the last few years, asteroseismology has been able to provide tighter constraints on stellar properties. However, as we reduce our precision, the systematic uncertainties from our choice of model physics begin to dominate. We need a way to model additional physics without sacrificing precision and to account for the effects of extra stellar physics.
+Historically, studying stars has been an integral part in our quest to uncover the secrets of the universe. Ever since our understanding of stellar structure and evolution progressed beyond that of a big ball of self-contained gas, following the pioneering works of \citet{Eddington1926}, we have studied stars to deepen our understanding in fields from particle physics to galactic evolution and cosmology.
 
-In this report, I will first introduce a new method for determining stellar parameters through the use of a hierarchical Bayesian model (HBM). Then, I will explain how we predict observables from stellar evolutionary codes. In Section \ref{sec:seismo} I introduce asteroseismology and show how the detection of stellar oscillations can probe the structure of a star. I then explain how we sample from our models of stellar evolution and asteroseismology, introducing the need for machine learning to speed-up the process and increase the scalability of the HBM. Once we have a way of making predictions of observables, I describe how we measure such properties in stars.
+Asteroseismolgy -- the study of the oscillations of stars -- has provided us with a new way to infer stellar properties and test fundamental physics. In a similar way to a seismologist studying earthquakes to probe the interior of the Earth, an asteroseismologist can infer stellar structure by measuring the frequencies of standing waves trapped within.
 
-In Chapter \ref{ch:paper} I will introduce my paper which applies the methods in this chapter to a sample of stars with asteroseismic detections already studied by \citet{Serenelli.Johnson.ea2017}. I will show that, with the assistance of machine learning, we can reduce statistical uncertainties on ages, masses and radii to $\sim 10\%$, $\sim 3\%$ and $\sim 1\%$ respectively, despite increasing the number of free parameters in the model over what is currently done in the literature.
+In recent years, asteroseismology has provided tight constraints on fundamental stellar properties such as age, mass and radius through direct scaling with the Sun or comparisons with theoretical stellar models. In the wake of missions such as \emph{CoRoT}, \emph{Kepler} and \emph{TESS} (ongoing), asteroseismology has lead to large catalogues of precise fundamental properties for red giant \citep[e.g.][]{Pinsonneault.Elsworth.ea2014, Serenelli.Johnson.ea2017} enabling better characterisation of exoplanetary systems and the chronology of the Milky Way. However, with the increased observational precision from asteroseismology, the uncertainties in our theoretical stellar models are becoming more important.
 
-Finally, in Chapter \ref{ch:future} I will propose an extension to the method whisch introduces a new observable to improve the inference of helium abundance in stars.
+The theory of stellar structure and evolution is not yet fully understood. We rely upon a series of assumptions often calibrated to the Sun or other well-studied stars. However, such assumptions carry with them a degree of uncertainty which propagates systematics on ages and masses determined by stellar modelling. For example, including the physics of heavy-element diffusion in low-mass stars ($0.8 \lesssim M \lesssim \SI{1.2}{\solarmass}$) can impact the efficiency of nuclear burning in its core and change the chemical composition at the surface with time. In heavier stars with a convective hydrogen-burning core ($M \gtrsim \SI{1.2}{\solarmass}$) the overshooting of material at the core boundary can also affect the predicted stellar age, yet this process is not fully understood. 
+
+Further uncertainty arises from our assumptions about the initial chemical composition of the star when it was formed, a requirement for an evolutionary stellar model. Helium ionisation lines are not measurable in the atmospheres of low-mass stars, making it difficult assume their initial chemical composition. Traditionally, a linear helium enrichment law is assumed which relates the helium abundance ($Y$) to the measurable heavy-element abundance ($Z$) through a ratio, $\Delta Y / \Delta Z$ calibrated to the Sun and the a primordial abundance, $Y_P$ \citep[see e.g.][]{Chiosi.Matteucci1982}. However, overestimating the helium abundances can underestimate age determinations.
+
+To make matters worse, inaccuracies in the mixing-length theory approximation of convection (parameterised by $\alpha_\mathrm{mlt}$ can cause further uncertainty. Individually modelling $Y$ and $\alpha_\mathrm{mlt}$ is a computationally expensive process and our observational uncertainties are not good enough to individually constrain them in the majority of stars.
+
+In this chapter, I will first introduce a new method for improving the inference of stellar parameters through the use of a hierarchical Bayesian model (HBM). This is a statistical model which allows us to encode prior information about the distribution of a stellar parameter in a population into the star-by-star analysis. In Section \ref{sec:hbm} I will describe the mathematics of an HBM and give a simplified example. Then, I will review the basics of the evolution of low-mass stars in Section \ref{sec:models} to show how we can predict observables from models of stellar evolution.
+
+In Section \ref{sec:seismo}, I introduce the theory of asteroseismology and show how the detection of stellar oscillations can probe the structure of a star. Once we have a way of predicting stellar observables, I describe a few methods for comparing our models to observations in Section \ref{sec:sample}. Here, I introduce the need for using machine learning to speed-up the process and increase the scalability of our HBM. Finally, in Section \ref{sec:obs}, I briefly describe the conventional methods used to infer stellar properties by observation in order to understand the contents of the following chapters. This include an example of observational asteroseismology through the use of an open source code to which I have contributed.
+
+In Chapter \ref{ch:paper}, I will introduce my paper which applies the methods in this chapter to a sample of low-mass, asteroseismic stars already studied by \citet{Serenelli.Johnson.ea2017}. Here, I include $Y$ and $\alpha_\mathrm{mlt}$ as additional parameters in our statistical model with population-level priors introduced by the HBM. I will show that HBMs can improve the precision of stellar fundamental parameters while introducing free parameters which account for uncertainties in our model physics.
+
+In Chapter \ref{ch:future}, I will propose an extension to the method which introduces a new observable to improve the inference of helium abundance in stars.
 
 \section{Hierarchical Bayesian Models}\label{sec:hbm}
 
@@ -244,7 +256,7 @@ We detect exceited oscillation modes in an excess of power centred on the freque
 
 We can determine theoretical oscillation modes by solving for the stellar profiles produced in the evolutionary models discussed in Section \ref{sec:models}. One such code build to predict oscillation modes for a given stellar structure is GYRE \citep{Townsend.Teitler2013}. 
 
-\section{Sampling Stellar Models}
+\section{Sampling Stellar Models}\label{sec:sample}
 
 Stellar evolution and astrometric models can predict observables given the age and initial conditions (e.g. mass, chemical composition and other model physics) for a given star. To implement the HBM described in Section \ref{sec:hbm} we need a way to generate predictions from the stellar models. There are generally two methods for achieving this: produced a discrete grid of models and evaluate the likelihood at each point or interpolate a grid of models and continuously sample an approximation of the grid. It is difficult to implement an HBM using either of these methods, because we need it to scale well with input dimensions and number of stars in a population.
 
@@ -254,7 +266,7 @@ Alternatively, we can interpolate the grid of models. This is common in the isoc
 
 One alternative to interpolation is to use machine learning. We can train an artificial neural network on the grid of models. This is the method used in Chapter \ref{ch:paper} and is explained in more detail in the attached paper (Appendix \ref{apx:paper}). In summary, the neural network is made up of many layers of trainable weights which are optimised to minimise the error between predictions and the training data. Advantageously, it is easy to evaluate the gradient of the likelihood of neural network predictions, because said gradient is required to optimise the weights. Therefore, approximating the models this way allows us to sample the posterior of the HBM using modern algorithms such as Hamiltonian Monte Carlo (HMC) \citep[see e.g. the No-U-Turn Sampler][]{Homan.Gelman2014}.
 
-\section{Observing Stars}
+\section{Observing Stars}\label{sec:obs}
 
 In this section, we briefly recall the fundamentals of observational astronomy. We first describe a method for determining luminosity from photometric and astrometric measurements. Then, we show how spectroscopy can determine the chemical composition and temperature at the surface of a star. Finally, we show how we determine the asteroseismic oscillation modes from photometric time series measurements of a solar-like oscillator.
 
@@ -266,19 +278,19 @@ Photometry is the measure of photon flux from an object. In stellar astronomy, w
 \end{equation}
 where $F_{V,0}$ is the reference flux at a magnitude of zero, and its colour, $m_B - m_V$.
 
-Astrometry is the measure of the position and movement of a star across the sky. We can measure the position of a star against a distant background throughout the year to determine its parallax ($\varpi$) -- the apparent difference in angular position of a star in the sky between observations separated by 1 astronomical unit (AU\footnote{The average distance between the Earth and the Sun, $\SI{1}{\mathrm{AU}} \approx \SI{1.5e8}{\kilo\meter}$.}). We can then derive the distance, $d$ to the star assuming the small-angle formula, $d \approx 1/\varpi$. We typically measure $\varpi$ in arc seconds (`''' or `as'), which yields a distance in parsecs (pc) -- the distance from the Sun to an object which has moved \SI{1}{''} over a baseline of \SI{1}{AU}.
+Astrometry is the measure of the position and movement of a star across the sky. We can measure the position of a star against a distant background throughout the year to determine its parallax ($\varpi$) -- the apparent difference in angular position of a star in the sky between observations separated by 1 astronomical unit (AU\footnote{The average distance between the Earth and the Sun, $\SI{1}{\mathrm{AU}} \approx \SI{1.5e8}{\kilo\meter}$.}). We can then derive the distance, $d$ to the star assuming the small-angle formula, $d \approx 1/\varpi$. We typically measure $\varpi$ in arc seconds (`\si{''}' or `as'), which yields a distance in parsecs (pc) -- the distance from the Sun to an object which has appeared to move \SI{1}{''} over a baseline of \SI{1}{AU}.
 
 If we wish to determine the luminosity of a star (photometric flux at the stellar surface), we need the distance to the star which we can determine using astrometry. We first calibrate the absolute magnitude, $\mathcal{M}$ of the star to get its flux at a distance of \SI{10}{pc}. For example, in the $V$-band,
 \begin{equation}
     \mathcal{M}_V = m_V - 5 \log(d) + 5 + A_V,
 \end{equation}
-where $A_V$ is the extinction -- an estimate of the light absorbed by interstellar dust between the star and the observer. However, to get to luminosity, we need the total flux across the entire electromagnetic spectrum. We can estimate this by calculating a bolometric correction ($BC$) which can be empirically determined or modelled by the surface properties of the star. The bolometric magnitude, $\mathcal{M}_\mathrm{bol}$,
+where $A_V$ is the extinction -- an estimate of the light absorbed by interstellar dust between the star and the observer. However, to get to luminosity, we need the total flux across the entire electromagnetic spectrum. We can estimate this by calculating a bolometric correction ($BC$) which can be determined from models of the stellar atmosphere. The bolometric magnitude, $\mathcal{M}_\mathrm{bol}$,
 \begin{equation}
     \mathcal{M}_\mathrm{bol} = \mathcal{M}_V - BC,
 \end{equation}
 is related to the luminosity of the star,
 \begin{equation}
-    \frac{L}{\mathrm{L}_{\odot}}=10^{\frac{2}{5}\cdot\left(\mathcal{M}_{\mathrm{bol}, \odot}-\mathcal{M}_{\mathrm{bol}}\right)},
+    \log\left(\frac{L}{\si{\solarluminosity}}\right) = \frac{2}{5}\left(\mathcal{M}_{\mathrm{bol}, \odot}-\mathcal{M}_{\mathrm{bol}}\right),
 \end{equation}
 in terms of the solar luminosity, \si{\solarluminosity}.
 

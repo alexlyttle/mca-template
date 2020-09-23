@@ -1,8 +1,8 @@
 \chapter{Introduction}
 
-Improving inference of fundamental stellar properties such as age, mass and radius is important for improving our understand of the chronology of the Milky Way and measuring the properties of exoplanets. In the last few years, asteroseismology has been able to provide tighter constraints on stellar properties [CITE]. However, as we reduce our precision, the systematic uncertainties from our choice of model physics begin to dominate. We need a way to model additional physics without sacrificing precision and to account for the effects of extra stellar physics.
+Improving inference of fundamental stellar properties such as age, mass and radius is important for improving our understand of the chronology of the Milky Way and measuring the properties of exoplanets. In the last few years, asteroseismology has been able to provide tighter constraints on stellar properties. However, as we reduce our precision, the systematic uncertainties from our choice of model physics begin to dominate. We need a way to model additional physics without sacrificing precision and to account for the effects of extra stellar physics.
 
-In this report, I will first introduce a new method for determining stellar parameters through the use of a hierarachical Bayesian model (HBM). Then, I will explain how we predict observables from stellar evolutionary codes. In Section \ref{sec:seismo} I introduce asteroseismology and show how the detection of stellar oscillations can probe the structure of a star. I then explain how we sample from our models of stellar evolution and asteroseismology, introducing the need for machine learning to speed-up the process and increase the scalability of the HBM. Once we have a way of making predictions of observables, I describe how we measure such properties in stars.
+In this report, I will first introduce a new method for determining stellar parameters through the use of a hierarchical Bayesian model (HBM). Then, I will explain how we predict observables from stellar evolutionary codes. In Section \ref{sec:seismo} I introduce asteroseismology and show how the detection of stellar oscillations can probe the structure of a star. I then explain how we sample from our models of stellar evolution and asteroseismology, introducing the need for machine learning to speed-up the process and increase the scalability of the HBM. Once we have a way of making predictions of observables, I describe how we measure such properties in stars.
 
 In Chapter \ref{ch:paper} I will introduce my paper which applies the methods in this chapter to a sample of stars with asteroseismic detections already studied by \citet{Serenelli.Johnson.ea2017}. I will show that, with the assistance of machine learning, we can reduce statistical uncertainties on ages, masses and radii to $\sim 10\%$, $\sim 3\%$ and $\sim 1\%$ respectively, despite increasing the number of free parameters in the model over what is currently done in the literature.
 
@@ -30,7 +30,7 @@ Assuming our observations of $\bm{y}$ are uncorrelated and subjected to random, 
 %
 where $\mathcal{N}(x | \mu, \sigma)$ is a normal distribution for $x$ with a mean, $\mu$ and standard deviation $\sigma$.
 
-The prior PDF of the model, assuming the parameters are independent, is $p(\bm{\theta}) = \prod_i p(\theta_i)$. Encoding our prior understanding of the model this way is useful for improving our inference. For example, we have independent prior understand that the age of the universe is $\sim \SI{14}{\giga\year}$ [CITE]. Hence, we may choose to give the age parameter for a stellar model a uniform prior PDF from \SIrange{0}{14}{\giga\year} such that our posterior PDF is not influenced by unphysical ages.
+The prior PDF of the model, assuming the parameters are independent, is $p(\bm{\theta}) = \prod_i p(\theta_i)$. Encoding our prior understanding of the model this way is useful for improving our inference. For example, we have independent prior knowledge that the age of the universe is $\sim \SI{14}{\giga\year}$ \citep{Bennett.Larson.ea2013, PlanckCollaboration.Ade.ea2016}. Hence, we may choose to give the age parameter for a stellar model a uniform distribution prior from \SIrange{0}{14}{\giga\year} such that our posterior PDF is not influenced by unphysical ages.
 
 Once we have the posterior, we can determine the marginalised posterior distribution of an individual parameter by integrating over all other parameters. For example, the marginalised posterior for $\theta_1$ is,
 %
@@ -40,17 +40,17 @@ Once we have the posterior, we can determine the marginalised posterior distribu
 %
 Therefore, we end up with a distribution which describes the probability of $\theta_1$ given $\bm{y}$ which takes into account the distribution (or uncertainty) of all other parameters in the model.
 
-Let us now consider modelling a population of $N_\mathrm{obj}$ similar stars. We could combine the posteriors for each star to get a posterior for the population of stars like so,
+Let us now consider modelling a population of $N_\mathrm{stars}$ similar stars. We could combine the posteriors for each star to get a posterior for the population of stars like so,
 %
 \begin{equation}
-    p(\bm{\Theta}|\bm{Y}) = \prod_{k=1}^{N_\mathrm{obj}} p(\bm{\theta}_k|\bm{y}_k),
+    p(\bm{\Theta}|\bm{Y}) = \prod_{k=1}^{N_\mathrm{stars}} p(\bm{\theta}_k|\bm{y}_k),
 \end{equation}
 %
-where $\bm{\Theta} = \{\bm{\theta}_k\}_{k=1}^{N_\mathrm{obj}}$ and $\bm{Y} = \{\bm{y}_k\}_{k=1}^{N_\mathrm{obj}}$ are the matrices of model parameters and observations. We refer to this as a \emph{no-pooled} model because no information is shared between the objects. 
+where $\bm{\Theta} = \{\bm{\theta}_k\}_{k=1}^{N_\mathrm{stars}}$ and $\bm{Y} = \{\bm{y}_k\}_{k=1}^{N_\mathrm{stars}}$ are the matrices of model parameters and observations. We refer to this as a \emph{no-pooled} model because no information is shared between the objects. 
 
-However, what if we have a model which describes the distribution of a particular parameter $\bm{\theta}_i$ in the population? For example, if we have prior knowledge that stars in an stellar cluster have to have formed at roughly the same time, we might want to encode such information into the model. One method would be to independently model the stars in the cluster and then find their mean and standard deviation in age. This method typically over-predicts the standard deviation because it fails to account the individual stellar uncertainties [CITE]. Alternatively, we can incorporate the assumption that stars in a cluster formed at the same time using one of two ways. The first is to \emph{partially-pool} and the second is to \emph{max-pool} the stellar ages respectively. The former assumes the stellar parameters are drawn from some common distribution, and the latter is the special case where all stellar parameters share the same value in the population.
+However, what if we have a model which describes the distribution of a particular parameter $\bm{\theta}_i$ in the population? For example, if we have prior knowledge that stars in an stellar cluster have to have formed at roughly the same time, we might want to encode such information into the model. One method would be to independently model the stars in the cluster and then find their mean and standard deviation in age. This method typically over-predicts the standard deviation because it fails to account the individual stellar uncertainties. Alternatively, we can incorporate the assumption that stars in a cluster formed at the same time using one of two ways. The first is to \emph{partially-pool} and the second is to \emph{max-pool} the stellar ages respectively. The former assumes the stellar parameters are drawn from some common distribution, and the latter is the special case where all stellar parameters share the same value in the population.
 
-We refer to models which pool parameters in this way as hierarachical models[CITE]. For a hierarchical model, we describe the distribution of $\bm{\Theta}$ in the population by a set of \emph{hyper-parameters}, $\bm{\phi} = \{ \phi_l \}_{l=1}^{N_\phi}$. Bayes' equation now becomes,
+We refer to models which pool parameters in this way as hierarchical model. For a hierarchical model, we describe the distribution of $\bm{\Theta}$ in the population by a set of \emph{hyper-parameters}, $\bm{\phi} = \{ \phi_l \}_{l=1}^{N_\phi}$. Bayes' equation now becomes,
 %
 \begin{equation}
     p(\bm{\phi}, \bm{\Theta} | \bm{Y}) \propto p(\bm{Y} | \bm{\Theta}) \, p(\bm{\Theta} | \bm{\phi}) \, p(\bm{\phi})
@@ -59,12 +59,12 @@ We refer to models which pool parameters in this way as hierarachical models[CIT
 where the probability of $\bm{\Theta}$ given $\bm{\phi}$ is,
 %
 \begin{equation}
-    p(\bm{\Theta} | \bm{\phi}) = \prod_{k=1}^{N_\mathrm{obj}} d(\bm{\theta}_k | \bm{\phi}),
+    p(\bm{\Theta} | \bm{\phi}) = \prod_{k=1}^{N_\mathrm{stars}} d(\bm{\theta}_k | \bm{\phi}),
 \end{equation}
 %
 and $d(\bm{\theta}_k | \bm{\phi})$ is some chosen distribution from which the parameters for a given star are drawn from the population.
 
-Let us consider a simple model which predicts the luminosities, $\bm{L}$ from the ages, $\bm{\tau}$ of $N_\mathrm{obj} = 1000$ stars in a cluster formed at roughly the same time. Modelling the population independently, we get the posterior,
+Let us consider a simple model which predicts the luminosities, $\bm{L}$ from the ages, $\bm{\tau}$ of $N_\mathrm{stars} = 1000$ stars in a cluster formed at roughly the same time. Modelling the population independently, we get the posterior,
 %
 \begin{equation}
     p(\bm{\tau} | \bm{L}) \propto \prod_{k=1}^{1000} p(L_k | \tau_k) \, p(\tau_k).
@@ -85,7 +85,7 @@ where,
     p(\bm{\tau} | \mu_\tau, \sigma_\tau) = \prod_{k=1}^{1000} \mathcal{N}(\tau_k | \mu_\tau, \sigma_\tau).
 \end{equation}
 
-There is no known analytical or empirical relation between the age of a star and its luminosity, but for the purposes of this example let us say that we know $L \propto \tau^{2}$. I generated 1000 stellar ages from a normal distribution with a mean of \SI{5}{\giga\year} and a standard deviation of \SI{0.05}{\giga\year}, and computed their luminosities using this relation. Then, I added Gaussian noise to the luminosities with a standard deviation of \SI{0.05}{\solarluminosity} and proceeded to model the stellar ages using Equations \ref{eq:age-np} and \ref{eq:age-pp} and the Bayesian package \texttt{pymc3} [CITE]. The observed and true luminosities are plot against the true ages in Figure \ref{fig:obs_lum} to show
+There is no known analytical or empirical relation between the age of a star and its luminosity, but for the purposes of this example let us say that we know $L \propto \tau^{2}$. I generated 1000 stellar ages from a normal distribution with a mean of \SI{5}{\giga\year} and a standard deviation of \SI{0.05}{\giga\year}, and computed their luminosities using this relation. Then, I added Gaussian noise to the luminosities with a standard deviation of \SI{0.05}{\solarluminosity} and proceeded to model the stellar ages using Equations \ref{eq:age-np} and \ref{eq:age-pp} and the Bayesian package \texttt{PyMC3} \citep{Salvatier.Wiecki.ea2016}. The observed and true luminosities are plot against the true ages in Figure \ref{fig:obs_lum} to show
 
 \begin{figure}[t]
     \centering
@@ -128,7 +128,7 @@ Integrating Equation \ref{eq:hydroeq} with respect to radius from the centre to 
 \begin{equation}
     \Omega = - 3(\gamma - 1) U,
 \end{equation}
-where $\Omega$ is the gravitational potential energy of the star, $\gamma$ is the adiabatic exponent which related the pressure of the star to the internal energy density, $u$, $P = (\gamma - 1) u$ assuming an ideal gas, and $U$ is the total internal energy of the star. We show the virial theorem here to demonstrate that if a star contracts, its potential energy decreases which in tern increases its internal energy and flux at the surface.
+where $\Omega$ is the gravitational potential energy of the star, $\gamma$ is the adiabatic exponent which related the pressure of the star to the internal energy density, $u$, $P = (\gamma - 1) u$ assuming an ideal gas, and $U$ is the total internal energy of the star. We show the virial theorem here to demonstrate that if a star contracts, its potential energy decreases which in turn increases its internal energy and flux at the surface.
 
 Internal energy transport within a star is either radiative, convective, or conductive in the case of white drawfs and neutron stars \citep{Yakovlev.Urpin1980}. Energy transportation is important when modelling stars. However, convective energy transfer is notoriously difficult to calculate. When solving for the evolution of stellar structure, we often use approximations of convection such as the mixing-length-theory \citep{Bohm-Vitense1958, Gough1977}. The mixing-length theory characterises the typical distance over which a blob of stellar material moves before dispersing as the fraction $\alpha_\mathrm{mlt}$ of the pressure scale height $H_P = -P (\dd r / \dd P)$, where $\alpha_\mathrm{mlt}$ is of order unity. Since the mixing-length theory is an approximation of convection, its accuracy varies between stellar models and as such the value of $\alpha_\mathrm{mlt}$ is often calibrated to the Sun. However, studies of 2D \citep{Ludwig.Freytag.ea1999} and 3D \citep{Trampedach.Stein.ea2014} hydrodynamical simulations calibrated $\alpha_\mathrm{mlt}$ in the range \numrange{1.5}{2.5} for different stars similar to the Sun.
 

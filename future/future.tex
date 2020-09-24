@@ -2,10 +2,20 @@
 
 I have demonstrated in Chapter \ref{ch:paper} that our method works on a sample of previously studied stars, returning high-precision stellar parameters in-line with prior work \citep{Serenelli.Johnson.ea2017}. In this chapter, I will briefly discuss future extensions to the method.
 
-\section{Including the Helium II Glitch}
+\section{Including an Asteroseismic Signature of Helium}
 
-\section{Increasing the Sample Size}
+We could extend our model to include an independent measure of helium abundance in the outer regions of the star. Since helium lines are not present in the spectra of low-mass stellar atmospheres, we must look to other indicators of helium abundance. One such approach utilises asteroseismology. Stellar oscillations can provide a probe of rapid variation is stellar structure via a periodic signature in the p mode separations \citep{Broomhall.Miglio.ea2014}. This has been used to study the base of the convective zone \citep{Monteiro.Christensen-Dalsgaard.ea2000} and crucially, the boundary of the second helium (He \textsc{ii}) ionization zone \citep{Houdek.Gough2007}. More recently, there have been attempts to measure helium abundance in cool stars \citep{Mazumdar.Monteiro.ea2014, Corsaro.DeRidder.ea2015, Verma.Raodeo.ea2017}.
 
-\section{Higher Masses and Evolved Stars}
+The boundary between the first and second helium ionization zones induces a peak in the adiabatic index (and sound-speed profile), particularly in the convective regions of sufficiently cool, low-mass stars. This causes and acoustic glitch in the oscillation modes, $\nu$ -- a small deviation from the normal pattern in a star without ionization. The amplitude of this glitch depends on the amount of helium present.
 
-Our next step is to include intermediate-mass stars with masses from approx. 1.2 solar masses to 3.0 solar masses.
+\citet{Verma.Raodeo.ea2019} characterises the deviation from the norm due to the He \textsc{ii} ionization zone with the following equation based on the works of \citep{Houdek.Gough2007},
+\begin{equation}
+    \delta v_{\mathrm{He}}=A_{\mathrm{He}} v e^{-8 \pi^{2} \Delta_{\mathrm{He}}^{2} v^{2}} \sin \left(4 \pi \tau_{\mathrm{He}} v+\psi_{\mathrm{He}}\right),
+\end{equation}
+where $A_{\mathrm{He}}$ relates to the area beneath the peak in the adiabatic index and $\Delta_{\mathrm{He}}$ describes its width. The amplitude of the glitch depends on $\nu$, but it has been shown that an average amplitude across all observed frequencies, $\langle A_\nu \rangle$, can be a good indicator of helium abundance.
+
+In a future extension to the HBM method detailed in this report, I will include $\langle A_\nu \rangle$ as a nmodel output, calculated using our models of stellar structure from MESA. Then, either using published values of the glitch amplitude for the sample of \emph{Kepler} dwarfs studied in this work \citep[e.g.][]{Verma.Raodeo.ea2017} or by performing my own analysis, I will introduce it as a new observable.
+
+% \section{Higher Masses and Evolved Stars}
+
+% Our next step is to include intermediate-mass stars with masses from approx. 1.2 solar masses to 3.0 solar masses.

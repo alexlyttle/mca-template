@@ -1,6 +1,6 @@
 \chapter{Future Work}\label{ch:future}
 
-I have demonstrated in Chapter \ref{ch:paper} that our method works on a sample of previously studied stars, returning high-precision stellar parameters in-line with prior work \citep{Serenelli.Johnson.ea2017}. In this chapter, I will briefly discuss future extensions to the method.
+I have demonstrated in Chapter \ref{ch:paper} that our method works on a sample of previously studied stars, returning high-precision stellar parameters in-line with prior work \citep{Serenelli.Johnson.ea2017}. Our method is scalable to multiple input and output parameters, allowing for additional observational constraints to be easily added. In this chapter, I will briefly discuss a future extension to the method.
 
 \section{Including an Asteroseismic Signature of Helium}
 
@@ -19,6 +19,21 @@ A recent study determining helium in a sample of low-mass dwarfs \citep{Verma.Ra
 \end{equation}
 % where $A_{\mathrm{He}}$ relates to the area beneath the peak in the adiabatic index, $\Delta_{\mathrm{He}}$ describes its width, $\tau_{\mathrm{He}$ is the acoustic depth of the boundary and . 
 where $A_{\mathrm{He}}(\nu)$ is the amplitude of the glitch, $\tau_{\mathrm{He}}$ is the acoustic depth of the He \textsc{ii} zone and $\psi_{\mathrm{He}}$ is the phase term. The amplitude of the glitch depends on $\nu$, but \citet{Verma.Raodeo.ea2019} showed that an average amplitude across all observed frequencies, $\langle A_{\mathrm{He}} \rangle$, can be a good indicator of helium abundance.
+
+Figure \ref{fig:glitch} shows an example of the glitch in KIC 10068307, a $\sim \SI{1.4}{\solarmass}$ dwarf star. We can see a small oscillating pattern in the echelle plot, particularly at low frequencies. The difference between the observed frequencies and the smoothed frequency pattern is also plot along with a fit from \citet{Verma.Raodeo.ea2017}. The component of the fit due to the He \textsc{ii} ionization zone can be used to extract $\langle A_{\mathrm{He}} \rangle$ for the star. 
+
+\begin{figure}
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[trim={1cm 0 2.5cm 0},clip,width=\linewidth]{future/KIC10068307_echelle.png}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.5\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{future/KIC10068307_glitch.png}
+    \end{subfigure}
+    \caption{\emph{Left}: an echelle diagram for a dwarf star (KIC 10068307) with the ridges according to each angular degree labelled. \emph{Right}: The small difference (glitch) in observed frequency $\nu$ compared with a smoothed frequency pattern for KIC 10068307 \citep{Verma.Raodeo.ea2017}.}
+    \label{fig:glitch}
+\end{figure}
 
 In a future extension to the HBM method detailed in this report, I will include $\langle A_{\mathrm{He}} \rangle$ as a model output, determined from our models of stellar structure from MESA. Then, either using published values of the glitch amplitude available for the sample of low-mass dwarfs studied in this work \citep[e.g.][]{Verma.Raodeo.ea2017} or by performing my own analysis, I will introduce it as a new observable quantity. This also gives us potential to hierarchically model the surface helium abundance. Once we can improve constraints on helium, we will improve the modelling of $\alpha_\mathrm{mlt}$. This will lead to testing other ways of pooling $\alpha_\mathrm{mlt}$ as a function of stellar properties.
 

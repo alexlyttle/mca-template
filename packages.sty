@@ -74,14 +74,20 @@
   refsection=part,
   citestyle=apa,
   style=authoryear,
+  maxbibnames=5,
+  maxcitenames=3,
   natbib=true,
   backend=biber,
   url=false,
   isbn=false,
   uniquename=false,
+  uniquelist=false,
+  firstinits=true,
+  dashed=false,
   block=none,
   date=year,
 ]{biblatex}
+\DeclareNameAlias{author}{last-first}
 \bibliography{bibliography}
 
 \usepackage{amsmath}
@@ -128,7 +134,7 @@
 \usepackage{xcolor}
 \hypersetup{
   colorlinks=true, %Colours links instead of ugly boxes
-  urlcolor=red, %Colour for external hyperlinks
+  urlcolor=blue, %Colour for external hyperlinks
   linkcolor=blue, %Colour of internal links
   citecolor=blue %Colour of citations, could be ``red''
 }

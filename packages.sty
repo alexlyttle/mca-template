@@ -22,6 +22,8 @@
 
 \usepackage{fancyhdr}
 
+\usepackage{lipsum}
+
 % Make chapter numbers into string words 1 -> ONE
 % \usepackage{fmtcount}
 % \makeatletter
@@ -102,11 +104,11 @@
 \usepackage{afterpage}
 \usepackage{rotating}
 
+% If using numerical citations:
 % The cite package cleans up the way citations are handled.  For example, it
 % changes the citation [1,2,3,6,7,8,9,10,11] into [1-3,6-11].  If your advisor
 % wants superscript citations, use the overcite package instead of the cite package.
 %\usepackage{cite}
-
 
 % The url package allows for the nice typesetting of URLs.  Since URLs are often
 % long with no spaces, they mess up line wrapping.  The command \url{http://www.physics.byu.edu}
@@ -139,12 +141,18 @@
   citecolor=blue %Colour of citations, could be ``red''
 }
 
+% Table packages
+\usepackage{longtable}
+\usepackage{booktabs}
+
+% Unit fomatting package for consistent quantity and unit formatting
+% E.g. SI{1.01(18)}{\kilo\meter\per\second} will show as $1.01 \pm 0.18\,km\,s^{-1}$
 \usepackage[
     range-units=single,
     separate-uncertainty=true,
     multi-part-units=single
-]{siunitx}    % Unit formatting and SI unit commands
-\DeclareSIUnit\year{yr}
+]{siunitx}
+% Some additional units are declared below, you may add more of your own
 \DeclareSIUnit\year{yr}
 \DeclareSIUnit\solarmass{\ensuremath{\mathrm{M}_\odot}}
 \DeclareSIUnit\solarradius{\ensuremath{\mathrm{R}_\odot}}
@@ -154,4 +162,4 @@
 \DeclareSIUnit\magnitude{mag}
 \DeclareSIUnit\aarcsec{as}
 
-\newcommand{\dd}{\mathrm{d}}
+\newcommand{\dd}{\mathrm{d}}  % Useful command for integral infinitesimal

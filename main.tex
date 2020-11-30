@@ -3,13 +3,6 @@
 % PREAMBLE OF THE DOCUMENT %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% 				         Edited by Nicola Rainiero
-%				         http://rainnic.altervista.org/tag/latex
-%			       	     ---------------------------------------
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
 % book - Default class for a normal book
 \documentclass[a4paper,12pt,oneside,table]{book}
 
@@ -61,55 +54,21 @@
 % ABSTRACT %
 \include{frontmatter/abstract}
 
-% % DEDICATION %
-% \include{frontmatter/dedication}
-
 % ACKNOWLEDGEMENTS %
 \include{frontmatter/acknowledgments}
 
-% % CREDITS %
-% \include{frontmatter/credits}
-
 % CONTENTS %
 \include{frontmatter/contents}
- 
- 
-% GLOSSARY %
-% \include{frontmatter/glossary}
-
-% In order to update the glossary you have to execute:
-% \makeindex -s main.ist -t main.alg -o main.acr main.acn
-% to insert an item in the document:
-% \newglossaryentry{item_label}{name={item}, description={description}}
-% if it doesn't appear you have to initialize it:
-% \glsadd{item_label}
-% or if it is called again in the following text:
-% \gls{item_label}
-
-% ACRONYMS %
-% \include{frontmatter/acronym}
-
-% In order to update the symbols you have to execute:
-% makeindex -s main.ist -t main.glg -o main.gls main.glo
-% to insert an item in the document::
-% \newacronym{item_label}{name={item}, description={description}}
-% if it doesn't appear you have to initialize it:
-% \glsadd{item_label}
-% or if it is called again in the following text:
-% \gls{item_label}
 
 %% MAINMATTER %%
 % The pages inside of mainmatter are in Arabic numerals and the chapters will have numeration
 \mainmatter
 
-%\part{If you want parts}
-\include{introduction/intro}
-\include{paper/paper}
-\include{future/future}
+% ========= Put Chapters Here ==========
+\include{chapter1/ch1}
+\include{chapter2/ch2}
 
 %% BACKMATTER %%
-% The pages inside of backmatter are in Arabic numerals and the chapters will not have numeration
-% \backmatter
 
 % BIBLIOGRAPHY WITH BIBTEX %
 \include{backmatter/bibliography}
@@ -119,29 +78,9 @@
 % In order to update the bibliography you have to execute:
 % bibtex main (without ".tex")
 
-% INDEX %
-% \include{backmatter/index}
-% To add an item in it, write the \index{WORD} after the word to highlight:
-% WORD\index{WORD}
-% In order to update the Index you have to execute:
-% makeindex main (without ".tex")
-
-% A typical session involving a bibliography, an index and so on would require:
-% pdflatex main
-% makeindex -s main.ist -t main.alg -o main.acr main.acn
-% makeindex -s main.ist -t main.glg -o main.gls main.glo
-% bibtex main
-% pdflatex main
-% pdflatex main
-% makeindex main
-% makeindex -s main.ist -t main.alg -o main.acr main.acn
-% makeindex -s main.ist -t main.glg -o main.gls main.glo
-% pdflatex main
-% pdflatex main
-
 %% APPENDICES %%
 \begin{appendices}
-    \include{appendix/paper}
+    \include{appendix/apx1}
 \end{appendices}
 
 \end{document}
